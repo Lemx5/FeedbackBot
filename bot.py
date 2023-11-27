@@ -22,8 +22,12 @@ async def start(_, message):
     await message.reply_text(f"**Hello {message.from_user.first_name}! I am a feedback bot. Send me a message and I will forward it to my master.**")
 
 
-@app.on_message(filters.private & ~filters.command)
+@app.on_message(filters.private)
 async def forward(_, message):
+    
+    if message.text.startswith("/"):
+        return
+
     if message.text:
         await app.send_message(
             chat_id=ADMIN,
