@@ -99,7 +99,6 @@ async def send_message_to_user(client, message):
         await message.reply(f"An unexpected error occurred: {str(e)}")
 
 
-
 @web.route('/')
 def index():
     return redirect(f"https://telegram.me/{BOT_USERNAME}")
@@ -110,4 +109,4 @@ def run():
 if __name__ == "__main__":
     t = Thread(target=run)
     t.start()
-    app.run()     
+    app.run()
