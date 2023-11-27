@@ -72,6 +72,14 @@ async def forward(client, message):
     
     caption = message.caption if message.caption else None
 
+    media = (
+        message.photo or
+        message.video or
+        message.audio or
+        message.document or
+        message.animation
+    )
+
     if message.reply_to_message:
         replied_msg = message.reply_to_message
         reply_caption = replied_msg.caption if replied_msg.caption else None
@@ -88,17 +96,12 @@ async def forward(client, message):
         if message.text:
             await app.send_message(ADMIN, text=f"{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
 
-        if message.photo or message.video or message.audio or message.document or message.animation:
+        if media:
             await app.send_cached_media(
                 chat_id=ADMIN,
-                caption=f"{caption}\n\n<b>User:<b/>{message.from_user.mention} <code>{message.from_user.id}</code>",
-                file_id=message.photo.file_id if message.photo else None or
-                message.video.file_id if message.video else None or
-                message.audio.file_id if message.audio else None or
-                message.document.file_id if message.document else None or
-                message.animation.file_id if message.animation else None
-            ) 
-
+                caption=f"{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
+                file_id=media.file_id
+            )
 
 @app.on_message(filters.command("start"))
 async def start(_, message):
