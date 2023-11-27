@@ -45,10 +45,10 @@ async def send_media(_, message):
     
         success = await message.copy(
              chat_id=ADMIN,
-             caption=f"{message.caption}\n\n <b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
+             caption=f"<b>Message:</b>{message.caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
         )
         if success:
-            await message.reply_text("**Your message has been sent to my master, please wait for reply**")
+            await message.reply_text("**Your message has been sent to my master, please wait for reply.**")
         else:
             await message.reply_text("**Something went wrong, please try again later.**")
 
