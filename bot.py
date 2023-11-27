@@ -62,12 +62,6 @@ async def send_message_user(client, message):
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
 
-
-@app.on_message(filters.command("start"))
-async def start(_, message):
-    await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
-
-
 @app.on_message(filters.private)
 async def forward(client, message):
     if message.text and message.text.startswith("/"):
@@ -101,6 +95,12 @@ async def forward(client, message):
                 message.document.file_id if message.document else None or
                 message.animation.file_id if message.animation else None
             ) 
+            
+
+@app.on_message(filters.command("start"))
+async def start(_, message):
+    await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
+
 
 @web.route('/')
 def index():
