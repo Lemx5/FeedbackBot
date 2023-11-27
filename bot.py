@@ -19,7 +19,7 @@ app = Client(
 
 @app.on_message(filters.command("start"))
 async def start(_, message):
-    await message.reply_text(f"**Hello {message.from_user.first_name}! I am a feedback bot. Send me a message and I will forward it to my master.**")
+    await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a feedback bot. Send me a message and I will forward it to my master.**")
 
 
 @app.on_message(filters.private)
