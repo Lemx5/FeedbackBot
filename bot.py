@@ -56,13 +56,13 @@ async def send_media(_, message):
 
 
 @app.on_message(filters.command("send") & filters.private & filters.user(ADMIN))
-async def send_message_to_user(_, message):
+async def send_message_to_user(client, message):
     try:
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
 
         user_id = message.command[1]
-        user = await app.get_users(user_id)
+        user = await client.get_users(user_id)
 
         if not user:
             return await message.reply("Invalid user id")
@@ -97,7 +97,7 @@ async def send_message_to_user(_, message):
 
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
-        
+
 
 
 @web.route('/')
