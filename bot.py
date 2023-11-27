@@ -85,14 +85,22 @@ async def forward(client, message):
         # Forward the replied message along with the user's reply
         await replied_msg.copy(
             chat_id=ADMIN,
-            caption=f"<b>Original Message:</b>\n{reply_caption}\n\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
+            caption=f"{reply_caption}n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>\n\n<b>User's Reply:</b>\n{message.text}",
         )
     else:
-        # Forward the user's message
-        await message.copy(
-            chat_id=ADMIN,
-            caption=f"<b>Message:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
-        )
+        if message.text:
+            await app.send_message(ADMIN, text=f"{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
+
+        if message.photo or message.video or message.audio or message.document or message.animation:
+            await app.send_cached_media(
+                chat_id=ADMIN,
+                caption=f"{caption}\n\n<b>User:<b/>{message.from_user.mention} <code>{message.from_user.id}</code>",
+                file_id=message.photo.file_id if message.photo else None or
+                message.video.file_id if message.video else None or
+                message.audio.file_id if message.audio else None or
+                message.document.file_id if message.document else None or
+                message.animation.file_id if message.animation else None
+            ) 
 
 @web.route('/')
 def index():
