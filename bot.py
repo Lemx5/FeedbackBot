@@ -7,6 +7,7 @@ API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN = int(os.getenv("ADMIN"))
+BOT_USERNAME = os.getenv("BOT_USERNAME")
 
 web = Flask(__name__)
 
@@ -53,6 +54,7 @@ async def send_media(_, message):
             await message.reply_text("**Something went wrong, please try again later.**")
 
 
+
 @app.on_message(filters.command("send") & filters.private & filters.user(ADMIN))
 async def send_message_to_user(_, message):
     try:
@@ -70,27 +72,37 @@ async def send_message_to_user(_, message):
         if not msg:
             return await message.reply("Please reply to a message.")
 
-        media = msg.photo or msg.video or msg.document
-        caption = msg.caption
-        if not caption:
-            caption = None
+        if msg.text:
+            await app.send_message(text=msg.text, chat_id=user_id)
+
+        media = (
+            msg.photo or
+            msg.video or
+            msg.audio or
+            msg.document or
+            msg.animation  # You can add more media types as needed
+        )
 
         if media:
-            await app.send_cached_media(chat_id=user_id, file_id=media.file_id, caption=caption)
-        elif msg.text:
-            await app.send_message(text=msg.text, chat_id=user_id)
+            await app.send_media(
+                chat_id=user_id,
+                media=media.file_id,
+                caption=msg.caption,
+                parse_mode="html"  # Ensure captions support HTML formatting
+            )
         else:
             await message.reply("I can't forward that!")
 
-        await message.reply(f"**Message sent to {user.first_name} successfully.**")    
+        await message.reply(f"**Message sent to {user.first_name} successfully.**")
 
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
+        
 
 
 @web.route('/')
 def index():
-    return redirect('https://telegram.me/primefeedbackbot')
+    return redirect(f"https://telegram.me/{BOT_USERNAME}")
 
 def run():
     web.run(host="0.0.0.0", port=8080)
