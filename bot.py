@@ -26,10 +26,6 @@ async def send_message_user(client, message):
         
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
-        
-        text_message = None
-        if len(message.command) < 3:
-            text_message = str(message.command[2])
                 
         user_id = int(message.command[1])
         user = await app.get_users(user_id)
@@ -59,13 +55,6 @@ async def send_message_user(client, message):
                 chat_id=user_id,
                 caption=caption
             )
- 
-        if (text_message and media) or (text_message and msg.text):
-            await message.reply(
-            chat_id = user_id,
-            text = f"{text_message}",
-            reply_to_message_id = msg.id
-        )
 
         await message.reply(f"**Message sent to {user.first_name} successfully.**")
 
