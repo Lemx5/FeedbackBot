@@ -60,7 +60,7 @@ async def send_message_user(client, message):
                 caption=caption
             )
  
-        if text_message and media:
+        if (text_message and media) or (text_message and msg.text):
             await message.reply(
             chat_id = user_id,
             text = f"{text_message}",
