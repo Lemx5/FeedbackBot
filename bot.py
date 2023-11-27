@@ -61,6 +61,11 @@ async def send_message_user(client, message):
 
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
+        
+@app.on_message(filters.command("start"))
+async def start(_, message):
+    await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
+
 
 @app.on_message(filters.private)
 async def forward(client, message):
@@ -102,11 +107,6 @@ async def forward(client, message):
                 caption=f"{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
                 file_id=media.file_id
             )
-
-@app.on_message(filters.command("start"))
-async def start(_, message):
-    await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
-
 
 @web.route('/')
 def index():
