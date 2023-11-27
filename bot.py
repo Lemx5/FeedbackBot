@@ -22,28 +22,36 @@ async def start(_, message):
     await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a feedback bot. Send me a message and I will forward it to my master.**")
 
 
-@app.on_message(filters.private)
+@app.on_message(filters.private & filters.text)
 async def forward(_, message):
     
     if message.from_user.id == ADMIN:
         return
 
-    if message.text:
-        await app.send_message(
+    success = await app.send_message(
             chat_id=ADMIN,
             text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
         )
-    elif message.media:
-        await message.copy(
-            chat_id=ADMIN,
-            message_id=message.id,
-            caption=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.caption or 'None'}"
-        )
+    if success:
+        await message.reply_text("**Your message has been sent to my master, please wait for reply**")
     else:
-        await message.reply_text("I can't forward that!")
+        await message.reply_text("**Something went wrong, please try again later.**")
 
-    await message.reply_text("**Your message has been sent to my master, please wait for reply**")
-
+@app.on_message(filters.private & filters.media)
+async def send_media(_, message):
+        
+        if message.from_user.id == ADMIN:
+            return
+    
+        success = await message.copy(
+             chat_id=ADMIN,
+             caption=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}"
+        )
+        if success:
+            await message.reply_text("**Your message has been sent to my master, please wait for reply**")
+        else:
+            await message.reply_text("**Something went wrong, please try again later.**")
+            
 
 @app.on_message(filters.command("send") & filters.private & filters.user(ADMIN))
 async def send_message_to_user(client, message):
