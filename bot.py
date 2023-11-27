@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from flask import Flask
+from flask import Flask, redirect
 from threading import Thread
 import os
 
@@ -84,10 +84,10 @@ async def send_message_to_user(client, message):
 
 @web.route('/')
 def index():
-    return "Bot is running!"
+    return redirect('https://telegram.me/primefeedbackbot?start')
 
 def run():
-    web.run(host="0.0.0.0", port=int(os.getenv('PORT', 8080)))
+    web.run(host="0.0.0.0", port=8080)
 
 if __name__ == "__main__":
     t = Thread(target=run)
