@@ -56,19 +56,17 @@ async def send_media(_, message):
         else:
             await message.reply_text("**Something went wrong, please try again later.**")
 
-
-
 @app.on_message(filters.command("reply"))
-async def send_message_to_user(client, message):
+async def send_message_user(_, message):
     try:
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
-        
+
         if message.from_user.id != ADMIN:
             return await message.reply("You are not allowed to use this command.")
 
-        user_id = message.command[1]
-        user = await client.get_users(user_id)
+        user_id = int(message.command[1])
+        user = await app.get_users(user_id)
 
         if not user:
             return await message.reply("Invalid user id")
@@ -79,7 +77,7 @@ async def send_message_to_user(client, message):
             return await message.reply("Please reply to a message.")
 
         if msg.text:
-            await client.send_message(text=msg.text, chat_id=user_id)
+            await app.send_message(user_id, text=msg.text)
 
         media = (
             msg.photo or
@@ -93,16 +91,14 @@ async def send_message_to_user(client, message):
             await app.send_media(
                 chat_id=user_id,
                 media=media.file_id,
-                caption=msg.caption,
-                parse_mode="html"
+                caption=msg.caption
             )
-        else:
-            await message.reply("I can't forward that!")
 
         await message.reply(f"**Message sent to {user.first_name} successfully.**")
 
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
+
 
 
 @web.route('/')
