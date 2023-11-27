@@ -69,30 +69,38 @@ async def start(_, message):
 
 @app.on_message(filters.private)
 async def forward(client, message):
-
-    if message.text.startswith("/"):
+    if message.text and message.text.startswith("/"):
         return
     
     if message.from_user.id == ADMIN:
         return
     
-    media = message.photo or message.video or message.audio or message.document or message.animation
-    
-    caption = message.caption
-    if not caption:
-        caption = None
+    caption = message.caption if message.caption else None
 
-    if media:
+    if message.reply_to_message:
+        replied_msg = message.reply_to_message
+        reply_caption = replied_msg.caption if replied_msg.caption else None
+
+        # Forward the replied message along with the user's reply
+        await replied_msg.copy(
+            chat_id=ADMIN,
+            caption=f"<b>Original Message:</b>\n{reply_caption}\n\n<b>User's Reply:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
+        )
+    else:
+        # Forward the user's message
         await message.copy(
             chat_id=ADMIN,
             caption=f"<b>Message:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
         )
+    
+    # Forward the user's text message (if any)
     if message.text:
         await app.send_message(
             chat_id=ADMIN,
             text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
         )
-    await message.reply_text("**Your message has been sent to my admin, admin will reply you soon.**")
+
+    await message.reply_text("**Your message has been sent to my admin; the admin will reply to you soon.**")
 
 
 @web.route('/')
