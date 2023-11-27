@@ -6,7 +6,7 @@ import os
 API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN = os.getenv("ADMIN")
+ADMIN = int(os.getenv("ADMIN"))
 
 web = Flask(__name__)
 
