@@ -25,7 +25,7 @@ async def start(_, message):
 
 @app.on_message(filters.private & filters.text)
 async def forward(_, message):
-    
+
     if message.text.startswith("/"):
         return
     
@@ -58,7 +58,7 @@ async def send_media(_, message):
 
 
 
-@app.on_message(filters.command("send") & filters.private)
+@app.on_message(filters.command("reply"))
 async def send_message_to_user(client, message):
     try:
         if len(message.command) < 2:
