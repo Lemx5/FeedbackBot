@@ -90,7 +90,7 @@ async def send_message_to_user(_, message):
 
 @web.route('/')
 def index():
-    return redirect('https://telegram.me/primefeedbackbot?start')
+    return redirect('https://telegram.me/primefeedbackbot')
 
 def run():
     web.run(host="0.0.0.0", port=8080)
