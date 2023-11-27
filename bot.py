@@ -67,7 +67,7 @@ async def start(_, message):
     await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
 
 
-@app.on_message(filters.private & filters.text)
+@app.on_message(filters.private)
 async def forward(client, message):
 
     if message.text.startswith("/"):
@@ -75,30 +75,24 @@ async def forward(client, message):
     
     if message.from_user.id == ADMIN:
         return
+    
+    media = message.photo or message.video or message.audio or message.document or message.animation
+    
+    caption = message.caption
+    if not caption:
+        caption = None
 
-    success = await app.send_message(
+    if media:
+        await message.copy(
+            chat_id=ADMIN,
+            caption=f"<b>Message:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
+        )
+    if message.text:
+        await app.send_message(
             chat_id=ADMIN,
             text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
         )
-    if success:
-        await message.reply_text("**Your message has been sent to my master, please wait for reply**")
-    else:
-        await message.reply_text("**Something went wrong, please try again later.**")
-
-@app.on_message(filters.private & filters.media)
-async def send_media(client, message):
-        
-        if message.from_user.id == ADMIN:
-            return
-    
-        success = await message.copy(
-             chat_id=ADMIN,
-             caption=f"<b>Message:</b>{message.caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
-        )
-        if success:
-            await message.reply_text("**Your message has been sent to my admin, admin will reply you soon.**")
-        else:
-            await message.reply_text("**Something went wrong, please try again later.**")
+    await message.reply_text("**Your message has been sent to my admin, admin will reply you soon.**")
 
 
 @web.route('/')
