@@ -24,7 +24,7 @@ async def start(_, message):
 
 @app.on_message(filters.private)
 async def forward(_, message):
-    
+
     if message.text.startswith("/"):
         return
 
@@ -87,7 +87,7 @@ def index():
     return "Bot is running!"
 
 def run():
-    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 8080)))
+    web.run(host="0.0.0.0", port=int(os.getenv('PORT', 8080)))
 
 if __name__ == "__main__":
     t = Thread(target=run)
