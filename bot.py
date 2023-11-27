@@ -77,10 +77,13 @@ async def forward(client, message):
         reply_caption = replied_msg.caption if replied_msg.caption else None
 
         # Forward the replied message along with the user's reply
-        await replied_msg.copy(
-            chat_id=ADMIN,
-            caption=f"{reply_caption}n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>\n\n<b>User's Reply:</b>\n{message.text}",
-        )
+        if replied_msg.text:
+            await client.send_message(ADMIN, text=f"{replied_msg.text}\nn\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
+        else:
+            await replied_msg.copy(
+                chat_id=ADMIN,
+                caption=f"{reply_caption}n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>\n\n<b>User's Reply:</b>\n{message.text}",
+            )
     else:
         if message.text:
             await app.send_message(ADMIN, text=f"{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
@@ -95,7 +98,7 @@ async def forward(client, message):
                 message.document.file_id if message.document else None or
                 message.animation.file_id if message.animation else None
             ) 
-            
+
 
 @app.on_message(filters.command("start"))
 async def start(_, message):
