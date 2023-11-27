@@ -57,8 +57,6 @@ async def send_message_user(client, message):
                 file_id=media.file_id
             )
 
-        await message.reply(f"**Message sent to {user.first_name} successfully.**")
-
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
         
@@ -91,11 +89,11 @@ async def forward(client, message):
 
         # Forward the replied message along with the user's reply
         if replied_msg.text:
-            await client.send_message(ADMIN, text=f"{replied_msg.text}\nn\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
+            await client.send_message(ADMIN, text=f"{replied_msg.text}\n\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
         else:
             await replied_msg.copy(
                 chat_id=ADMIN,
-                caption=f"{reply_caption}n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>\n\n<b>User's Reply:</b>\n{message.text}",
+                caption=f"{reply_caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>\n\n<b>User's Reply:</b>\n{message.text}",
             )
     else:
         if message.text:
@@ -107,6 +105,8 @@ async def forward(client, message):
                 caption=f"{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
                 file_id=media.file_id
             )
+    await message.reply_text("Your message has been sent to the Admin. He will contact you soon.")      
+
 
 @web.route('/')
 def index():
