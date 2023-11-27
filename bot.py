@@ -93,13 +93,6 @@ async def forward(client, message):
             chat_id=ADMIN,
             caption=f"<b>Message:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
         )
-    
-    # Forward the user's text message (if any)
-    if message.text:
-        await app.send_message(
-            chat_id=ADMIN,
-            text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
-        )
 
     await message.reply_text("**Your message has been sent to my admin; the admin will reply to you soon.**")
 
