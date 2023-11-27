@@ -80,7 +80,7 @@ async def send_message_to_user(client, message):
             msg.video or
             msg.audio or
             msg.document or
-            msg.animation  # You can add more media types as needed
+            msg.animation
         )
 
         if media:
@@ -88,7 +88,7 @@ async def send_message_to_user(client, message):
                 chat_id=user_id,
                 media=media.file_id,
                 caption=msg.caption,
-                parse_mode="html"  # Ensure captions support HTML formatting
+                parse_mode="html"
             )
         else:
             await message.reply("I can't forward that!")
