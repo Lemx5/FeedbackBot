@@ -21,12 +21,12 @@ app = Client(
 @app.on_message(filters.command("reply"))
 async def send_message_user(client, message):
     try:
-        if len(message.command) < 2:
-            return await message.reply("Please provide a user id.")
-
         if message.from_user.id != ADMIN:
             return await message.reply("You are not allowed to use this command.")
-
+        
+        if len(message.command) < 2:
+            return await message.reply("Please provide a user id.")
+        
         user_id = int(message.command[1])
         user = await app.get_users(user_id)
 
@@ -50,7 +50,7 @@ async def send_message_user(client, message):
         )
 
         if media:
-            await Client.send_media(
+            await app.send_media(
                 chat_id=user_id,
                 media=media.file_id,
                 caption=msg.caption
