@@ -26,6 +26,9 @@ async def start(_, message):
 @app.on_message(filters.private & filters.text)
 async def forward(_, message):
     
+    if message.text.startswith("/"):
+        return
+    
     if message.from_user.id == ADMIN:
         return
 
