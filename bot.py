@@ -76,7 +76,7 @@ async def forward(client, message):
     if message.from_user.id == ADMIN:
         return
 
-    success = await Client.send_message(
+    success = await app.send_message(
             chat_id=ADMIN,
             text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
         )
