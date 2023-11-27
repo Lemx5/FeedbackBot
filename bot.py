@@ -55,11 +55,14 @@ async def send_media(_, message):
 
 
 
-@app.on_message(filters.command("send") & filters.private & filters.user(ADMIN))
+@app.on_message(filters.command("send") & filters.private)
 async def send_message_to_user(client, message):
     try:
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
+        
+        if message.from_user.id != ADMIN:
+            return await message.reply("You are not allowed to use this command.")
 
         user_id = message.command[1]
         user = await client.get_users(user_id)
