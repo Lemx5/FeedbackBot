@@ -84,7 +84,7 @@ async def forward(client, message):
         # Forward the replied message along with the user's reply
         await replied_msg.copy(
             chat_id=ADMIN,
-            caption=f"<b>Original Message:</b>\n{reply_caption}\n\n<b>User's Reply:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
+            caption=f"<b>Original Message:</b>\n{reply_caption}\n\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
         )
     else:
         # Forward the user's message
