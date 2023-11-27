@@ -51,9 +51,10 @@ async def send_message_user(client, message):
             await app.send_message(user_id, text=msg.text)
             
         if media :
-            await media.copy(
+            await app.send_cached_media(
                 chat_id=user_id,
-                caption=caption
+                caption=caption,
+                file_id=media.file_id
             )
 
         await message.reply(f"**Message sent to {user.first_name} successfully.**")
