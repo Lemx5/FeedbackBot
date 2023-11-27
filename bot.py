@@ -45,22 +45,22 @@ async def send_media(_, message):
     
         success = await message.copy(
              chat_id=ADMIN,
-             caption=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}"
+             caption=f"{message.caption}\n\n <b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
         )
         if success:
             await message.reply_text("**Your message has been sent to my master, please wait for reply**")
         else:
             await message.reply_text("**Something went wrong, please try again later.**")
-            
+
 
 @app.on_message(filters.command("send") & filters.private & filters.user(ADMIN))
-async def send_message_to_user(client, message):
+async def send_message_to_user(_, message):
     try:
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
 
         user_id = message.command[1]
-        user = await client.get_users(user_id)
+        user = await app.get_users(user_id)
 
         if not user:
             return await message.reply("Invalid user id")
@@ -84,8 +84,6 @@ async def send_message_to_user(client, message):
 
         await message.reply(f"**Message sent to {user.first_name} successfully.**")    
 
-    except ValueError as ve:
-        await message.reply(f"Error: {str(ve)}")
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
 
