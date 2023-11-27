@@ -34,9 +34,9 @@ async def forward(_, message):
             text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
         )
     elif message.media:
-        await app.send_cached_media(
+        await message.copy(
             chat_id=ADMIN,
-            file_id=message.file_id,
+            message_id=message.id,
             caption=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.caption or 'None'}"
         )
     else:
