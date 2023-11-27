@@ -94,9 +94,6 @@ async def forward(client, message):
             caption=f"<b>Message:</b>\n{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>"
         )
 
-    await message.reply_text("**Your message has been sent to my admin; the admin will reply to you soon.**")
-
-
 @web.route('/')
 def index():
     return redirect(f"https://telegram.me/{BOT_USERNAME}")
