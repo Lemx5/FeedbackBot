@@ -73,7 +73,7 @@ async def send_message_to_user(client, message):
             return await message.reply("Please reply to a message.")
 
         if msg.text:
-            await app.send_message(text=msg.text, chat_id=user_id)
+            await client.send_message(text=msg.text, chat_id=user_id)
 
         media = (
             msg.photo or
