@@ -18,13 +18,13 @@ app = Client(
     bot_token=BOT_TOKEN)
 
 
-@app.on_message(filters.command("start"))
+@Client.on_message(filters.command("start"))
 async def start(_, message):
     await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a feedback bot. Send me a message and I will forward it to my Admin.**")
 
 
-@app.on_message(filters.private & filters.text)
-async def forward(_, message):
+@Client.on_message(filters.private & filters.text)
+async def forward(client, message):
 
     if message.text.startswith("/"):
         return
@@ -32,7 +32,7 @@ async def forward(_, message):
     if message.from_user.id == ADMIN:
         return
 
-    success = await app.send_message(
+    success = await Client.send_message(
             chat_id=ADMIN,
             text=f"**New Feedback\nUser:** {message.from_user.mention} {message.from_user.id}\n\n{message.text}"
         )
@@ -41,8 +41,8 @@ async def forward(_, message):
     else:
         await message.reply_text("**Something went wrong, please try again later.**")
 
-@app.on_message(filters.private & filters.media)
-async def send_media(_, message):
+@Client.on_message(filters.private & filters.media)
+async def send_media(client, message):
         
         if message.from_user.id == ADMIN:
             return
@@ -56,8 +56,8 @@ async def send_media(_, message):
         else:
             await message.reply_text("**Something went wrong, please try again later.**")
 
-@app.on_message(filters.command("reply"))
-async def send_message_user(_, message):
+@Client.on_message(filters.command("reply"))
+async def send_message_user(client, message):
     try:
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
@@ -66,7 +66,7 @@ async def send_message_user(_, message):
             return await message.reply("You are not allowed to use this command.")
 
         user_id = int(message.command[1])
-        user = await app.get_users(user_id)
+        user = await client.get_users(user_id)
 
         if not user:
             return await message.reply("Invalid user id")
@@ -77,7 +77,7 @@ async def send_message_user(_, message):
             return await message.reply("Please reply to a message.")
 
         if msg.text:
-            await app.send_message(user_id, text=msg.text)
+            await client.send_message(user_id, text=msg.text)
 
         media = (
             msg.photo or
@@ -88,7 +88,7 @@ async def send_message_user(_, message):
         )
 
         if media:
-            await app.send_media(
+            await Client.send_media(
                 chat_id=user_id,
                 media=media.file_id,
                 caption=msg.caption
