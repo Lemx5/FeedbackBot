@@ -26,6 +26,10 @@ async def send_message_user(client, message):
         
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
+        
+        text_mssg = None
+        if len(message.command) > 3:
+            text_mssg = str(message.command[2:])
                 
         user_id = int(message.command[1])
         user = await app.get_users(user_id)
@@ -35,8 +39,11 @@ async def send_message_user(client, message):
 
         msg = message.reply_to_message
 
-        if not msg:
+        if not msg and not text_mssg:
             return await message.reply("Please reply to a message.")
+        
+        if text_mssg is not None:
+            await app.send_message(user_id, text=text_mssg)
         
         media = (
             msg.photo or
@@ -50,7 +57,7 @@ async def send_message_user(client, message):
         if msg.text:
             await app.send_message(user_id, text=msg.text)
             
-        if media :
+        if media:
             await app.send_cached_media(
                 chat_id=user_id,
                 caption=caption,
@@ -86,14 +93,17 @@ async def forward(client, message):
     if message.reply_to_message:
         replied_msg = message.reply_to_message
         reply_caption = replied_msg.caption if replied_msg.caption else None
+        replied_media = replied_msg.photo or replied_msg.video or replied_msg.audio or replied_msg.document or replied_msg.animation
 
         # Forward the replied message along with the user's reply
         if replied_msg.text:
             await client.send_message(ADMIN, text=f"{replied_msg.text}\n\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
-        else:
-            await replied_msg.copy(
+
+        if replied_media:
+            await client.send_cached_media(
                 chat_id=ADMIN,
-                caption=f"{reply_caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>\n\n<b>User's Reply:</b>\n{message.text}",
+                caption=f"{reply_caption}\n\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
+                file_id=replied_media.file_id
             )
     else:
         if message.text:
