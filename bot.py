@@ -18,6 +18,7 @@ app = Client(
     bot_token=BOT_TOKEN)
 
 
+
 @app.on_message(filters.command("reply"))
 async def send_message_user(client, message):
     try:
@@ -27,9 +28,7 @@ async def send_message_user(client, message):
         if len(message.command) < 2:
             return await message.reply("Please provide a user id.")
         
-        text_mssg = None
-        if len(message.command) > 3:
-            text_mssg = message.command[2:]
+        text_mssg = ' '.join(message.command[2:]) if len(message.command) > 2 else None
                 
         user_id = int(message.command[1])
         user = await app.get_users(user_id)
@@ -44,29 +43,32 @@ async def send_message_user(client, message):
         
         if not msg and text_mssg is not None:
             await app.send_message(user_id, text=f"{text_mssg}")
-        
-        media = (
-            msg.photo or
-            msg.video or
-            msg.audio or
-            msg.document or
-            msg.animation
-        )
-        caption = msg.caption if msg.caption else None
-
-        if msg.text and not text_mssg:
-            await app.send_message(user_id, text=msg.text)
-            
-        if media and not text_mssg:
-            await app.send_cached_media(
-                chat_id=user_id,
-                caption=caption,
-                file_id=media.file_id
+        elif msg:
+            media = (
+                msg.photo or
+                msg.video or
+                msg.audio or
+                msg.document or
+                msg.animation
             )
+            caption = msg.caption if msg.caption else None
+
+            if msg.text and not text_mssg:
+                await app.send_message(user_id, text=msg.text)
+                
+            if media and not text_mssg:
+                await app.send_cached_media(
+                    chat_id=user_id,
+                    caption=caption,
+                    file_id=media.file_id
+                )
 
     except Exception as e:
         await message.reply(f"An unexpected error occurred: {str(e)}")
-        
+
+
+
+  
 @app.on_message(filters.command("start"))
 async def start(_, message):
     await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
