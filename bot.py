@@ -105,7 +105,6 @@ async def forward(client, message):
                 caption=f"{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
                 file_id=media.file_id
             )
-    await message.reply_text("Your message has been sent to the Admin. He will contact you soon.")      
 
 
 @web.route('/')
