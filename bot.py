@@ -81,6 +81,23 @@ async def send_message_user(client, message):
 async def start(_, message):
     await message.reply_text(f"**Hello {message.from_user.first_name}!\nI am a support bot. Send me a message and I will forward it to my Admin.**")
 
+@app.on_message(filters.command("ban") & filters.user(ADMIN))
+async def ban_user(_, message):
+    if len(message.command) < 2:
+        return await message.reply("Please provide a user id.")
+    
+    user_id = int(message.command[1])
+    await banned_users.insert_one({'_id': user_id})
+    await message.reply(f"User {user_id} has been banned.")
+
+@app.on_message(filters.command("unban") & filters.user(ADMIN))
+async def unban_user(_, message):
+    if len(message.command) < 2:
+        return await message.reply("Please provide a user id.")
+    
+    user_id = int(message.command[1])
+    await banned_users.delete_one({'_id': user_id})
+    await message.reply(f"User {user_id} has been unbanned.")    
 
 @app.on_message(filters.private)
 async def forward(client, message):
@@ -127,25 +144,6 @@ async def forward(client, message):
                 caption=f"{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
                 file_id=media.file_id
             )
-
-@app.on_message(filters.command("ban") & filters.user(ADMIN))
-async def ban_user(_, message):
-    if len(message.command) < 2:
-        return await message.reply("Please provide a user id.")
-    
-    user_id = int(message.command[1])
-    await banned_users.insert_one({'_id': user_id})
-    await message.reply(f"User {user_id} has been banned.")
-
-@app.on_message(filters.command("unban") & filters.user(ADMIN))
-async def unban_user(_, message):
-    if len(message.command) < 2:
-        return await message.reply("Please provide a user id.")
-    
-    user_id = int(message.command[1])
-    await banned_users.delete_one({'_id': user_id})
-    await message.reply(f"User {user_id} has been unbanned.")    
-
 
 @web.route('/')
 def index():
