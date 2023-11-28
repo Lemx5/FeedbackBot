@@ -29,7 +29,7 @@ async def send_message_user(client, message):
         
         text_mssg = None
         if len(message.command) > 3:
-            text_mssg = str(message.command[2:])
+            text_mssg = message.command[2:]
                 
         user_id = int(message.command[1])
         user = await app.get_users(user_id)
@@ -42,8 +42,8 @@ async def send_message_user(client, message):
         if not msg and not text_mssg:
             return await message.reply("Please reply to a message.")
         
-        if text_mssg is not None:
-            await app.send_message(user_id, text=text_mssg)
+        if not msg and text_mssg is not None:
+            await app.send_message(user_id, text=f"{text_mssg}")
         
         media = (
             msg.photo or
@@ -54,10 +54,10 @@ async def send_message_user(client, message):
         )
         caption = msg.caption if msg.caption else None
 
-        if msg.text:
+        if msg.text and not text_mssg:
             await app.send_message(user_id, text=msg.text)
             
-        if media:
+        if media and not text_mssg:
             await app.send_cached_media(
                 chat_id=user_id,
                 caption=caption,
