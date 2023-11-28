@@ -95,7 +95,6 @@ async def forward(client, message):
         reply_caption = replied_msg.caption if replied_msg.caption else None
         replied_media = replied_msg.photo or replied_msg.video or replied_msg.audio or replied_msg.document or replied_msg.animation
 
-        # Forward the replied message along with the user's reply
         if replied_msg.text:
             await client.send_message(ADMIN, text=f"{replied_msg.text}\n\n<b>User's Reply:</b>\n{message.text}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>")
 
