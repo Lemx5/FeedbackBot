@@ -2,12 +2,20 @@ from pyrogram import Client, filters
 from flask import Flask, redirect
 from threading import Thread
 import os
+from motor.motor_asyncio import AsyncIOMotorClient
+
 
 API_ID = os.getenv("API_ID")
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN = int(os.getenv("ADMIN"))
 BOT_USERNAME = os.getenv("BOT_USERNAME")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+client = AsyncIOMotorClient(DATABASE_URL)
+db = client['databas']
+banned_users = db['banned_users']
 
 web = Flask(__name__)
 
@@ -79,6 +87,9 @@ async def forward(client, message):
     if message.text and message.text.startswith("/"):
         return
     
+    if await banned_users.find_one({'_id': message.from_user.id}):
+        return await message.reply("You are banned from using this bot.")
+    
     if message.from_user.id == ADMIN:
         return
     
@@ -116,6 +127,24 @@ async def forward(client, message):
                 caption=f"{caption}\n\n<b>User:</b>\n{message.from_user.mention} <code>{message.from_user.id}</code>",
                 file_id=media.file_id
             )
+
+@app.on_message(filters.command("ban") & filters.user(ADMIN))
+async def ban_user(_, message):
+    if len(message.command) < 2:
+        return await message.reply("Please provide a user id.")
+    
+    user_id = int(message.command[1])
+    await banned_users.insert_one({'_id': user_id})
+    await message.reply(f"User {user_id} has been banned.")
+
+@app.on_message(filters.command("unban") & filters.user(ADMIN))
+async def unban_user(_, message):
+    if len(message.command) < 2:
+        return await message.reply("Please provide a user id.")
+    
+    user_id = int(message.command[1])
+    await banned_users.delete_one({'_id': user_id})
+    await message.reply(f"User {user_id} has been unbanned.")    
 
 
 @web.route('/')
